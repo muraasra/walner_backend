@@ -1,0 +1,18 @@
+databases:
+  - name: mydb
+    plan: free
+services:
+  - type: web
+    name: my-django-api
+    runtime: python
+    buildCommand: './build.sh'
+    startCommand: 'gunicorn myproject.wsgi:application'
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mydb
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: '4'
