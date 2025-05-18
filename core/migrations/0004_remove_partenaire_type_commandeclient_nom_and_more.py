@@ -4,6 +4,15 @@ import django.utils.timezone
 from django.db import migrations, models
 
 
+def convertir_boutique_en_boolean(apps, schema_editor):
+    # Obtenir le modèle avec le champ boutique
+    Partenaire = apps.get_model('core', 'Partenaire')
+    # Convertir les valeurs existantes
+    for partenaire in Partenaire.objects.all():
+        # Si boutique > 0, alors True, sinon False
+        partenaire.boutique = bool(partenaire.boutique)
+        partenaire.save()
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -70,6 +79,9 @@ class Migration(migrations.Migration):
             name='prix_achat',
             field=models.FloatField(blank=True, default=0),
         ),
+        # Exécuter d'abord une fonction Python pour convertir les données
+        migrations.RunPython(convertir_boutique_en_boolean),
+        # Ensuite modifier le type de champ
         migrations.AlterField(
             model_name='partenaire',
             name='boutique',
