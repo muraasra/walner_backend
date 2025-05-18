@@ -10,7 +10,7 @@ def convertir_boutique_en_boolean(apps, schema_editor):
     # Convertir les valeurs existantes
     for partenaire in Partenaire.objects.all():
         # Si boutique > 0, alors True, sinon False
-        partenaire.boutique = bool(partenaire.boutique)
+        partenaire.boutique = partenaire.boutique > 0
         partenaire.save()
 
 class Migration(migrations.Migration):
@@ -79,9 +79,15 @@ class Migration(migrations.Migration):
             name='prix_achat',
             field=models.FloatField(blank=True, default=0),
         ),
-        # Exécuter d'abord une fonction Python pour convertir les données
+        # Modifier d'abord le type de champ en IntegerField temporaire
+        migrations.AlterField(
+            model_name='partenaire',
+            name='boutique',
+            field=models.IntegerField(default=1),
+        ),
+        # Exécuter la fonction Python pour convertir les données
         migrations.RunPython(convertir_boutique_en_boolean),
-        # Ensuite modifier le type de champ
+        # Enfin modifier le type de champ en BooleanField
         migrations.AlterField(
             model_name='partenaire',
             name='boutique',
