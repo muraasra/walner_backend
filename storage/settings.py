@@ -150,6 +150,7 @@ DATABASES = {
         conn_max_age=600
     )
 }
+DATABASES['default']['OPTIONS'] = {'connect_timeout': 10}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
